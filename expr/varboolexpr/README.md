@@ -1,6 +1,6 @@
-# Boolean expressions with propositional variables
+# Boolean expressions with global declarations
 
-Extend the language of boolean expressions with variables and declarations, according to the following [AST](src/ast.ml):
+Extend the language of boolean expressions with variables and global declarations, according to the following [AST](src/ast.ml):
 ```ocaml
 type boolExpr =
     True
@@ -64,18 +64,21 @@ expr:
   ...
 ```
 
-## Static semantics
 
-Unlike thep previous expression languages, this language contain syntactically-correct programs that do not have a semantics.
-This happens when the expression contains some variables which are not defined in the declarations.
+## Static checks
+
+This language allows one to write syntactically-correct programs which have an undefined semantics.
+This happens when the expression within a program contains some variables which are not defined in the declarations.
 For instance:
 ```
 let x = true ; y = false in x and z     (* the variable z is used but not declared *)
 ```
-We also consider incorrect a declaration which binds the same name multiple times, or that use expressions with variables in declarations like e.g.:
+We want to rule out these troublesome programs before they are executed, i.e. at **static time**.
+
+We also consider incorrect a program whose declaration binds the same variable multiple times, or use expressions with variables in declarations:
 ```
 let x = true ; x = false in x           (* the variable x is declared multiple times *)
-let x = true ; y = not x in x and y     (* the expression not x in declaration contains a variable *)
+let x = true ; y = not x in x and y     (* the expression "not x" in declaration contains a variable *)
 ```
 
 Write a function with type:
@@ -83,22 +86,24 @@ Write a function with type:
 typecheck: boolProg -> bool
 ```
 that statically detects when a program is well-typed.
-It is required that the evaluation of well-typed programs will not fail.
+It is required that the evaluation of well-typed programs never fails.
 
 
 ## Big-step semantics
 
-The big-step semantics of programs now takes as input a pair `(d,e)`, where `d` is a declaration and `e` is a boolean expression.
+The big-step semantics of programs now takes as input a program `(d,e)`, where `d` is a declaration and `e` is a boolean expression.
 In order to define the `eval` function, you will need to define a function to evaluate a declaration, and use this 
-to give semantics to the case `Var`.
-
-For instance, a possible implementation of the `eval` function could have the following form:
-```ocaml
-let rec eval (d,e) = match e with
-    True -> true
-  | False -> false
-  | Var(x) -> (match apply x d with
-      Some b -> b
-    | None -> raise UnboundVar)
-  ...
+to give semantics to the case `Var`. There are various ways to do this: my suggestion is to write a function which transforms a declaration into a function rho mapping variables to boolean values (a so-called **environment**).
+In this way, the rule to evaluate variable will take the form:
 ```
+---------------- [B-Var]
+Var x => rho x
+```
+
+In order to transform a declaration (represented as a list of pairs) into a function, I suggest to write a recursive function 
+```ocaml
+env_of_decl : boolDecl -> string -> bool
+```
+with the following behaviour:
+- in the base case (empty declaration), it outputs the always-undefined function;
+- in the inductive case (x,e)::d, it computes the environment from d, and extends it with the binding x -> b, where b is the evaluation of e.

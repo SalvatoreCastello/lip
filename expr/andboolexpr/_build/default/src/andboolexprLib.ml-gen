@@ -1,0 +1,14 @@
+(** @canonical AndboolexprLib.Ast *)
+module Ast = AndboolexprLib__Ast
+
+
+(** @canonical AndboolexprLib.Lexer *)
+module Lexer = AndboolexprLib__Lexer
+
+
+(** @canonical AndboolexprLib.Main *)
+module Main = AndboolexprLib__Main
+
+
+(** @canonical AndboolexprLib.Parser *)
+module Parser = AndboolexprLib__Parser

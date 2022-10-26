@@ -1,0 +1,4 @@
+(lang dune 3.4)
+(name andboolexpr)
+(sections (lib .) (bin ../../bin) (doc ../../doc/andboolexpr))
+(files (lib (META dune-package opam)) (bin (andboolexpr)) (doc (README.md)))

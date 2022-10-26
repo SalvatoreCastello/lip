@@ -1,0 +1,14 @@
+(** @canonical BoolexprLib.Ast *)
+module Ast = BoolexprLib__Ast
+
+
+(** @canonical BoolexprLib.Lexer *)
+module Lexer = BoolexprLib__Lexer
+
+
+(** @canonical BoolexprLib.Main *)
+module Main = BoolexprLib__Main
+
+
+(** @canonical BoolexprLib.Parser *)
+module Parser = BoolexprLib__Parser

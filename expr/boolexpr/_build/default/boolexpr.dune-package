@@ -1,0 +1,4 @@
+(lang dune 3.4)
+(name boolexpr)
+(sections (lib .) (bin ../../bin) (doc ../../doc/boolexpr))
+(files (lib (META dune-package opam)) (bin (boolexpr)) (doc (README.md)))

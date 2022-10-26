@@ -1,0 +1,138 @@
+# dune exec arithexpr
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Workspace root: "/mnt/c/Users/salvo/OneDrive - Universit\195\160 di
+# Cagliari/Universit\195\160/3\194\176 Anno - 1\194\176
+# Semestre/LIP/lip/expr/arithexpr"
+# Auto-detected concurrency: 12
+$ /home/sal/.opam/lip/bin/ocamlc.opt -config > /tmp/dune_c53683_output
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; for_host = None
+#  ; fdo_target_exe = None
+#  ; build_dir = "default"
+#  ; toplevel_path = Some External "/home/sal/.opam/lip/lib/toplevel"
+#  ; ocaml_bin = External "/home/sal/.opam/lip/bin"
+#  ; ocaml = Ok External "/home/sal/.opam/lip/bin/ocaml"
+#  ; ocamlc = External "/home/sal/.opam/lip/bin/ocamlc.opt"
+#  ; ocamlopt = Ok External "/home/sal/.opam/lip/bin/ocamlopt.opt"
+#  ; ocamldep = Ok External "/home/sal/.opam/lip/bin/ocamldep.opt"
+#  ; ocamlmklib = Ok External "/home/sal/.opam/lip/bin/ocamlmklib.opt"
+#  ; env =
+#      map
+#        { "DUNE_OCAML_HARDCODED" : "/home/sal/.opam/lip/lib"
+#        ; "DUNE_OCAML_STDLIB" : "/home/sal/.opam/lip/lib/ocaml"
+#        ; "DUNE_SOURCEROOT" :
+#            "/mnt/c/Users/salvo/OneDrive - Universit\195\160 di Cagliari/Universit\195\160/3\194\176 Anno - 1\194\176 Semestre/LIP/lip/expr/arithexpr"
+#        ; "INSIDE_DUNE" :
+#            "/mnt/c/Users/salvo/OneDrive - Universit\195\160 di Cagliari/Universit\195\160/3\194\176 Anno - 1\194\176 Semestre/LIP/lip/expr/arithexpr/_build/default"
+#        ; "OCAMLFIND_IGNORE_DUPS_IN" :
+#            "/mnt/c/Users/salvo/OneDrive - Universit\195\160 di Cagliari/Universit\195\160/3\194\176 Anno - 1\194\176 Semestre/LIP/lip/expr/arithexpr/_build/install/default/lib"
+#        ; "OCAMLPATH" :
+#            "/mnt/c/Users/salvo/OneDrive - Universit\195\160 di Cagliari/Universit\195\160/3\194\176 Anno - 1\194\176 Semestre/LIP/lip/expr/arithexpr/_build/install/default/lib"
+#        ; "OCAMLTOP_INCLUDE_PATH" :
+#            "/mnt/c/Users/salvo/OneDrive - Universit\195\160 di Cagliari/Universit\195\160/3\194\176 Anno - 1\194\176 Semestre/LIP/lip/expr/arithexpr/_build/install/default/lib/toplevel"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
+#        }
+#  ; findlib_paths = [ External "/home/sal/.opam/lip/lib" ]
+#  ; arch_sixtyfour = true
+#  ; natdynlink_supported = true
+#  ; supports_shared_libraries = true
+#  ; ocaml_config =
+#      { version = "4.14.0"
+#      ; standard_library_default = "/home/sal/.opam/lip/lib/ocaml"
+#      ; standard_library = "/home/sal/.opam/lip/lib/ocaml"
+#      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
+#      ; ccomp_type = "cc"
+#      ; c_compiler = "gcc"
+#      ; ocamlc_cflags =
+#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread"; "-fPIC" ]
+#      ; ocamlc_cppflags = [ "-D_FILE_OFFSET_BITS=64" ]
+#      ; ocamlopt_cflags =
+#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread"; "-fPIC" ]
+#      ; ocamlopt_cppflags = [ "-D_FILE_OFFSET_BITS=64" ]
+#      ; bytecomp_c_compiler =
+#          [ "gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ]
+#      ; bytecomp_c_libraries = [ "-lm"; "-ldl"; "-lpthread" ]
+#      ; native_c_compiler =
+#          [ "gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ]
+#      ; native_c_libraries = [ "-lm"; "-ldl" ]
+#      ; native_pack_linker = [ "ld"; "-r"; "-o" ]
+#      ; cc_profile = []
+#      ; architecture = "amd64"
+#      ; model = "default"
+#      ; int_size = 63
+#      ; word_size = 64
+#      ; system = "linux"
+#      ; asm = [ "as" ]
+#      ; asm_cfi_supported = true
+#      ; with_frame_pointers = false
+#      ; ext_exe = ""
+#      ; ext_obj = ".o"
+#      ; ext_asm = ".s"
+#      ; ext_lib = ".a"
+#      ; ext_dll = ".so"
+#      ; os_type = "Unix"
+#      ; default_executable_name = "a.out"
+#      ; systhread_supported = true
+#      ; host = "x86_64-pc-linux-gnu"
+#      ; target = "x86_64-pc-linux-gnu"
+#      ; profiling = false
+#      ; flambda = false
+#      ; spacetime = false
+#      ; safe_string = true
+#      ; exec_magic_number = "Caml1999X031"
+#      ; cmi_magic_number = "Caml1999I031"
+#      ; cmo_magic_number = "Caml1999O031"
+#      ; cma_magic_number = "Caml1999A031"
+#      ; cmx_magic_number = "Caml1999Y031"
+#      ; cmxa_magic_number = "Caml1999Z031"
+#      ; ast_impl_magic_number = "Caml1999M031"
+#      ; ast_intf_magic_number = "Caml1999N031"
+#      ; cmxs_magic_number = "Caml1999D031"
+#      ; cmt_magic_number = "Caml1999T031"
+#      ; natdynlink_supported = true
+#      ; supports_shared_libraries = true
+#      ; windows_unicode = false
+#      }
+#  }
+$ (cd _build/default && /home/sal/.opam/lip/bin/ocamldep.opt -modules -impl src/main.ml) > _build/default/src/.arithexprLib.objs/main.ml.d
+$ (cd _build/default && /home/sal/.opam/lip/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.arithexprLib.objs/byte -no-alias-deps -opaque -open ArithexprLib -o src/.arithexprLib.objs/byte/arithexprLib__Main.cmo -c -impl src/main.ml)
+> File "src/main.ml", lines 3-12, characters 29-59:
+>  3 | .............................function
+>  4 |     True -> "True"
+>  5 |   | False -> "False"
+>  6 |   | If(e0,e1,e2) -> "If(" ^ (string_of_boolexpr e0) ^ "," ^ (string_of_boolexpr e1) ^ "," ^ (string_of_boolexpr e2) ^ ")"
+>  7 |   | And(e0,e1) -> "And(" ^ (string_of_boolexpr e0) ^ "," ^ (string_of_boolexpr e1) ^ ")"
+>  8 |   | Or(e0,e1) -> "Or(" ^ (string_of_boolexpr e0) ^ "," ^ (string_of_boolexpr e1) ^ ")"
+>  9 |   | Not(e0) -> "Not(" ^ (string_of_boolexpr e0) ^ ")"
+> 10 |   | Succ(e0) -> "Succ(" ^ (string_of_boolexpr e0) ^ ")"
+> 11 |   | Pred(e0) -> "Pred(" ^ (string_of_boolexpr e0) ^ ")"
+> 12 |   | IsZero(e0) -> "IsZero(" ^ (string_of_boolexpr e0) ^ ")"
+> Error (warning 8 [partial-match]): this pattern-matching is not exhaustive.
+> Here is an example of a case that is not matched:
+> Zero
+> File "src/main.ml", line 28, characters 12-13:
+> 28 |   | Zero -> 0
+>                  ^
+> Error: This expression has type int but an expression was expected of type
+>          bool
+[2]

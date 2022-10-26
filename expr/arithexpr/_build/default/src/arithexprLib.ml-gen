@@ -1,0 +1,14 @@
+(** @canonical ArithexprLib.Ast *)
+module Ast = ArithexprLib__Ast
+
+
+(** @canonical ArithexprLib.Lexer *)
+module Lexer = ArithexprLib__Lexer
+
+
+(** @canonical ArithexprLib.Main *)
+module Main = ArithexprLib__Main
+
+
+(** @canonical ArithexprLib.Parser *)
+module Parser = ArithexprLib__Parser

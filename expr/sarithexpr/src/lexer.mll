@@ -22,4 +22,3 @@ rule read =
   | "pred" { PRED }
   | "iszero" { ISZERO }    
   | eof { EOF }
->>>>>>> main

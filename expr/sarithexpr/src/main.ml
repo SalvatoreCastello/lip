@@ -1,6 +1,38 @@
 open Ast
 
 type exprval = Bool of bool | Nat of int
+type exprtype = BoolT | NatT
+exception TypeError of string
+
+let rec typecheck = function
+    True -> BoolT
+  | False -> BoolT
+  | Not(e) -> (match typecheck e with
+    | BoolT -> BoolT
+    | _ -> raise (TypeError "Bool Expected"))
+  | And(e1,e2) -> (match (typecheck e1,typecheck e2) with
+    |  (BoolT,BoolT) -> BoolT
+    | _ -> raise (TypeError "Bools Expected"))
+  | Or(e1,e2) -> (match (typecheck e1,typecheck e2) with
+  |  (BoolT,BoolT) -> BoolT
+  | _ -> raise (TypeError "Bools Expected"))
+  | If(e0,e1,e2) -> (match (typecheck e0,typecheck e1,typecheck e2) with
+      |  (BoolT,BoolT,BoolT) -> BoolT
+      | _ -> raise (TypeError "Bools Expected"))
+  | Zero -> NatT
+  | Succ(e) -> (match typecheck e with
+      | NatT -> NatT
+      | _ -> raise (TypeError "Nat Expected"))
+  | Pred(e) -> (match typecheck e with
+      | NatT -> NatT
+      | _ -> raise (TypeError "Nat Expected"))
+  | IsZero(e) -> (match typecheck e with
+      | NatT -> BoolT
+      | _ -> raise (TypeError "Nat expected"))
+
+let string_of_type = function
+  | BoolT -> "BoolT"
+  | NatT -> "NatT"
 
 let string_of_val = function
     Bool b -> if b then "true" else "false"
@@ -68,8 +100,6 @@ let rec trace e = try
 (*                              Big-step semantics                            *)
 (******************************************************************************)
 
-exception TypeError of string
-
 let rec eval = function
     True -> Bool true
   | False -> Bool false
@@ -103,4 +133,3 @@ let rec eval = function
       | _ -> raise (TypeError "IsZero on bool")
     )
 ;;
->>>>>>> main

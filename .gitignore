@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 *~
 expr/andboolexpr/_build/.sandbox/
 
 expr/boolexpr/_build/.sandbox/
 
 expr/arithexpr/_build/.sandbox/
+=======
+*~
+**/_build
+*.opam
+>>>>>>> main

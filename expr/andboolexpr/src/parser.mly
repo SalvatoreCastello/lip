@@ -14,8 +14,22 @@ open Ast
 %token AND
 %token OR
 
+<<<<<<< HEAD
+=======
+(* ELSE is not associative *)
+%nonassoc ELSE
+
+(* OR is left associative has the priority over ELSE *)
+>>>>>>> main
 %left OR
+
+(* AND is left associative and has the priority over OR *)
 %left AND
+<<<<<<< HEAD
+=======
+
+(* NOT is right associative has the highest priority *)
+>>>>>>> main
 %right NOT
 
 %start <boolExpr> prog

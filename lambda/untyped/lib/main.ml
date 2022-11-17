@@ -53,7 +53,11 @@ let max_nat t =
 
  Usage: is_free x t = true iff the variable x occurs free in t
  **********************************************************************)
-let is_free _ = failwith "TODO"
+let rec is_free x t = match x with
+    Var(x) -> x=t
+  | Abs(x,t) -> is_free t x
+  | App(x,t) -> is_free x x
+;;
 
 
 (**********************************************************************

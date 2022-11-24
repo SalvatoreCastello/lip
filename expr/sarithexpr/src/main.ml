@@ -1,5 +1,6 @@
 open Ast
 
+<<<<<<< HEAD
 type exprval = Bool of bool | Nat of int
 type exprtype = BoolT | NatT
 exception TypeError of string
@@ -33,10 +34,19 @@ let rec typecheck = function
 let string_of_type = function
   | BoolT -> "BoolT"
   | NatT -> "NatT"
+=======
+type exprtype = BoolT | NatT;;
+
+type exprval = Bool of bool | Nat of int
+>>>>>>> main
 
 let string_of_val = function
     Bool b -> if b then "true" else "false"
   | Nat n -> string_of_int n
+<<<<<<< HEAD
+=======
+;;
+>>>>>>> main
 
 let rec string_of_expr = function
     True -> "true"
@@ -49,6 +59,15 @@ let rec string_of_expr = function
   | Succ(e) -> "succ(" ^ string_of_expr e ^ ")"
   | Pred(e) -> "pred(" ^ string_of_expr e ^ ")"
   | IsZero(e) -> "iszero(" ^ string_of_expr e ^ ")"
+<<<<<<< HEAD
+=======
+;;
+
+let string_of_type = function
+      BoolT -> "Bool"
+    | NatT -> "Nat"
+;;
+>>>>>>> main
 
 let parse (s : string) : expr =
   let lexbuf = Lexing.from_string s in
@@ -56,16 +75,59 @@ let parse (s : string) : expr =
   ast
 
 (******************************************************************************)
+<<<<<<< HEAD
+=======
+(*                                Type checking                               *)
+(******************************************************************************)
+
+exception TypeError of string;;
+
+let rec typecheck = function
+    True -> BoolT
+  | False -> BoolT
+  | Not(e) -> (match typecheck e with
+        BoolT -> BoolT
+      | NatT -> raise (TypeError (string_of_expr e ^ " has type Nat, but type Bool was expected")))
+  | And(e1,e2) | Or(e1,e2) ->
+    (match (typecheck e1,typecheck e2) with
+       (BoolT,BoolT) -> BoolT
+     | (NatT,_) -> raise (TypeError (string_of_expr e1 ^ " has type Nat, but type Bool was expected"))
+     | (_,NatT) -> raise (TypeError (string_of_expr e2 ^ " has type Nat, but type Bool was expected")))
+  | If(e0,e1,e2) -> (match (typecheck e0,typecheck e1,typecheck e2) with
+        (NatT,_,_) -> raise (TypeError (string_of_expr e0 ^ " has type Nat, but type Bool was expected"))
+      | (BoolT,t1,t2) when t1=t2 -> t1
+      | (BoolT,t1,t2) -> raise (TypeError (string_of_expr e2 ^ " has type " ^ string_of_type t2 ^ ", but type " ^ string_of_type t1 ^ " was expected"))
+)
+  | Zero -> NatT
+  | Succ(e) | Pred(e) ->
+    (match typecheck e with
+       NatT -> NatT
+     | BoolT -> raise (TypeError (string_of_expr e ^ " has type Bool, but type Nat was expected")))
+  | IsZero(e) -> (match typecheck e with
+       NatT -> BoolT
+     | BoolT -> raise (TypeError (string_of_expr e ^ " has type Bool, but type Nat was expected")))
+;;
+
+(******************************************************************************)
+>>>>>>> main
 (*                            Small-step semantics                            *)
 (******************************************************************************)
 
 exception NoRuleApplies
 exception PredOfZero
 
+<<<<<<< HEAD
 let rec is_nv = function
     Zero -> true
   | Succ(e) -> is_nv e
   | _ -> false
+=======
+let rec is_succ = function
+    Zero -> true
+  | Succ(e) -> is_succ e
+  | _ -> false
+;;
+>>>>>>> main
   
 let rec trace1 = function
     If(True,e1,_) -> e1
@@ -82,10 +144,17 @@ let rec trace1 = function
   | Or(e1,e2) -> let e1' = trace1 e1 in Or(e1',e2)
   | Succ(e) -> let e' = trace1 e in Succ(e')
   | Pred(Zero) -> raise NoRuleApplies
+<<<<<<< HEAD
   | Pred(Succ(e)) when is_nv e -> e
   | Pred(e) -> let e' = trace1 e in Pred(e')
   | IsZero(Zero) -> True
   | IsZero(Succ(e)) when is_nv e -> False    
+=======
+  | Pred(Succ(e)) when is_succ e -> e
+  | Pred(e) -> let e' = trace1 e in Pred(e')
+  | IsZero(Zero) -> True
+  | IsZero(Succ(e)) when is_succ e -> False    
+>>>>>>> main
   | IsZero(e) -> let e' = trace1 e in IsZero(e')    
   | _ -> raise NoRuleApplies
 ;;

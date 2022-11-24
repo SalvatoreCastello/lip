@@ -22,7 +22,12 @@ open Ast
 %left OR
 %left AND
 %left NOT
+<<<<<<< HEAD
 %nonassoc SUCC, PRED, ISZERO
+=======
+
+%right SUCC, PRED, ISZERO
+>>>>>>> main
 
 %start <expr> prog
 

@@ -1,136 +1,113 @@
 open Ast
+open Types
 
-type exprval = Bool of bool | Nat of int
-type exprtype = BoolT | NatT
-type state = ide -> exprval
-type conf = St of state | Cmd of cmd * state
-
-exception TypeError of string
-(*
-let rec typecheck = function
-    True -> BoolT
-  | False -> BoolT
-  | Not(e) -> (match typecheck e with
-    | BoolT -> BoolT
-    | _ -> raise (TypeError "Bool Expected"))
-  | And(e1,e2) -> (match (typecheck e1,typecheck e2) with
-    |  (BoolT,BoolT) -> BoolT
-    | _ -> raise (TypeError "Bools Expected"))
-  | Or(e1,e2) -> (match (typecheck e1,typecheck e2) with
-  |  (BoolT,BoolT) -> BoolT
-  | _ -> raise (TypeError "Bools Expected"))
-  | If(e0,e1,e2) -> (match (typecheck e0,typecheck e1,typecheck e2) with
-      |  (BoolT,BoolT,BoolT) -> BoolT
-      | _ -> raise (TypeError "Bools Expected"))*)
-
-let string_of_type = function
-  | BoolT -> "BoolT"
-  | NatT -> "NatT"
-
-let string_of_val = function
-    Bool b -> if b then "true" else "false"
-  | Nat n -> string_of_int n
-
-let rec string_of_expr = function
-    True -> "true"
-  | False -> "false"
-  | Var(e) -> e
-  | Const(e) -> string_of_int e
-  | Not(e) -> "not " ^ string_of_expr e
-  | And(e1,e2) -> string_of_expr e1 ^ " and " ^ string_of_expr e2
-  | Or(e1,e2) -> string_of_expr e1 ^ " or " ^ string_of_expr e2
-  | Add(e1,e2) -> string_of_expr e1 ^ "+" ^ string_of_expr e2
-  | Sub(e1,e2) -> string_of_expr e1 ^ "-" ^ string_of_expr e2
-  | Mul(e1,e2) -> string_of_expr e1 ^ "*" ^ string_of_expr e2
-  | Eq(e1,e2) -> string_of_expr e1 ^ "=" ^ string_of_expr e2
-  | Leq(e1,e2) -> string_of_expr e1 ^ "<=" ^ string_of_expr e2
-
-let rec string_of_cmd = function
-    Skip -> "skip"
-  | Assign(x,e) -> x + ":=" + string_of_int e
-  | Seq(c1,c2) -> string_of_cmd c1 + ";" + string_of_cmd c2
-  | If(e,c1,c2) -> "if " + string_of_expr e + " then " + string_of_cmd c1 + " else " + string_of_cmd c2
-  | While(e,c) -> "while " + string_of_expr e + " do " + string_of_cmd c
-
-
-  (*
-let rec string_of_state = function
-    [] -> ""
-  | (x,v)::xs -> x + "=" + string_of_val v + ";" + string_of_state xs
-
-let rec string_of_conf = function
-    St s -> string_of_state s
-  | Cmd(c,s) -> string_of_cmd c + " | " + string_of_state s
-
-let rec string_of_trace = function
-    [] -> ""
-  | c::cs -> string_of_conf c + " | " + string_of_trace cs*)
-
-
-
-
-
-
-let parse (s : string) : expr =
+let parse (s : string) : cmd =
   let lexbuf = Lexing.from_string s in
   let ast = Parser.prog Lexer.read lexbuf in
   ast
 
 (******************************************************************************)
-(*                            Small-step semantics                            *)
-(******************************************************************************)
-
-exception NoRuleApplies
-exception PredOfZero
-
-let rec is_nv = function
-    Zero -> true
-  | Succ(e) -> is_nv e
-  | _ -> false
-  
-let rec trace1 = function
-    If(True,e1,_) -> e1
-  | If(False,_,e2) -> e2
-  | If(e0,e1,e2) -> let e0' = trace1 e0 in If(e0',e1,e2)
-  | Not(True) -> False
-  | Not(False) -> True
-  | Not(e) -> let e' = trace1 e in Not(e')
-  | And(True,e) -> e
-  | And(False,_) -> False
-  | And(e1,e2) -> let e1' = trace1 e1 in And(e1',e2)
-  | Or(True,_) -> True
-  | Or(False,e) -> e
-  | Or(e1,e2) -> let e1' = trace1 e1 in Or(e1',e2)  
-  | _ -> raise NoRuleApplies
-;;
-
-let rec trace e = try
-    let e' = trace1 e
-    in e::(trace e')
-  with NoRuleApplies -> [e]
-;;
-
-(******************************************************************************)
 (*                              Big-step semantics                            *)
+(*                    eval_expr : state -> expr -> exprval                    *)
 (******************************************************************************)
 
-let rec eval = function
+let rec eval_expr st = function
     True -> Bool true
   | False -> Bool false
-  | Not(e) -> (match eval e with
+  | Var(e) -> st e
+  | Const(e) -> Nat e
+  | Not(e) -> (match eval_expr st e with
         Bool b -> Bool(not b)
-      | _ -> raise (TypeError "Not on nat")
+      | _ -> raise (TypeError "Not")
     )
-  | And(e1,e2) -> (match (eval e1,eval e2) with
+  | And(e1,e2) -> (match (eval_expr st e1,eval_expr st e2) with
         (Bool b1,Bool b2) -> Bool (b1 && b2)
-      | _ -> raise (TypeError "Or on nat")
+      | _ -> raise (TypeError "Or")
     )
-  | Or(e1,e2) -> (match (eval e1,eval e2) with
+  | Or(e1,e2) -> (match (eval_expr st e1,eval_expr st e2) with
         (Bool b1,Bool b2) -> Bool (b1 || b2)
-      | _ -> raise (TypeError "Or on nat")
-    ) 
-  | If(e0,e1,e2) -> (match eval e0 with
-        Bool b -> if b then eval e1 else eval e2
-      | _ -> raise (TypeError "If on nat guard")
+      | _ -> raise (TypeError "Or")
     )
+  | Add(n1,n2) -> (match (eval_expr st n1, eval_expr st n2) with
+        (Nat n1, Nat n2) -> Nat (n1+n2)
+        | _ -> raise (TypeError "Add")
+    )
+  | Sub(n1,n2) -> (match (eval_expr st n1, eval_expr st n2) with
+        (Nat n1, Nat n2) -> Nat (n1-n2)
+        | _ -> raise (TypeError "Sub")
+    )
+  | Mul(n1,n2) -> (match (eval_expr st n1, eval_expr st n2) with
+        (Nat n1, Nat n2) -> Nat (n1*n2)
+        | _ -> raise (TypeError "Mul")
+    )
+  | Eq(n1,n2) -> (match (eval_expr st n1, eval_expr st n2) with
+        (Nat n1, Nat n2) -> Bool (n1=n2)
+        | _ -> raise (TypeError "Eq")
+    )
+  | Leq(n1,n2) -> (match (eval_expr st n1, eval_expr st n2) with
+    (Nat n1, Nat n2) -> Bool (n1<=n2)
+    | _ -> raise (TypeError "Leq")
+)
 ;;
+
+(******************************************************************************)
+(*                            Small-step semantics                            *)
+(*                             trace1 conf -> conf                            *)
+(******************************************************************************)
+
+let bot = fun x -> raise (UnboundVar x)
+
+(* Bind associa al nome "x" il valore "v" nello stato "f", se la stringa è già presente in y allora gli lo stesso valore che ha y, con il
+   valore v, altrimenti associa ad una nuova stringa il valore y. *)
+let bind f x v = fun y -> if y=x then v else f y
+
+
+let rec trace1 = function
+    St _ ->  raise NoRuleApplies (* Stato qualunque senza comandi *)
+  | Cmd(c,st) -> match c with
+      | Skip -> St st (* Esegue il comando di skip e restituisce lo stato stesso. *)
+      (* Assegnamento, il valore v del let prende la valutazione dell'espressione "e" e lo mette nello stato attuale,
+         All'interno delle parentesi viene richiamata la bind per associare all*)
+      | Assign(x,e) -> let v = eval_expr st e in St (bind st x v)
+      (* Seq(" ; "), prende due comandi c1 e c2, valuta (con la small step) il comando "c1" nello stato "st", una volta valutato
+         - Se questo restituice uno stato "st1", viene restituito il secondo comando "c2" con lo stato precedentemente restituito
+         - Se la valutazione di "c1" restituisce un nuovo comando " c1' ", allora viene restituito un nuovo comando di sequenza
+           dove c1' è il primo della sequenza, c2 viene eseguito soltanto dopo aver eseguito nuovamente "c1'" *)
+      | Seq(c1,c2) -> (match trace1 (Cmd(c1,st)) with
+          St st1 -> Cmd(c2,st1)
+        | Cmd(c1',st1) -> Cmd(Seq(c1',c2),st1))
+      (* If(expression,command1,command2), viene valtuata l'espressione "e" nello stato "st"
+         - Se questa espressione restituisce True allora viene eseguito il comando c1 nel ramo THEN
+         - Se questa espressione restituisce False allora viene eseguito il comando c2 nel ramo ELSE
+         - Qualunque altra cosa la valutazione di e restituisca, allora è un eccezione. *)
+      | If(e,c1,c2) -> (match eval_expr st e with
+          Bool true -> Cmd(c1,st)
+        | Bool false -> Cmd(c2,st)
+        | _ -> raise (TypeError "If"))
+      (* While(expression,command), viene valutata l'espressione "e" nello stato "st"
+        - Se questa espressione restituisce True allora viene fatto es:"x+1; while(..):x+1", quindi restituita la sequenza di
+        --- Comando e nuovamente il While(expression,command), sempre all'interno di uno stato
+        - Se questa espressione restituisce False allora viene restituito lo stato attuale.
+        - Qualunque altra cosa la valutazione di e restituisca, allora è un eccezione. *)
+      | While(e,c) ->  (match eval_expr st e with
+          Bool true -> Cmd(Seq(c,While(e,c)),st)
+        | Bool false -> St st
+        | _ -> raise (TypeError "While"))
+;;
+
+(**********************************************************************
+ trace_rec : int-> conf -> conf list
+ Usage: trace_rec n t performs n steps of the small-step semantics
+ **********************************************************************)
+ let rec trace_rec n t =
+  if n<=0 then [t]
+  else try
+      let t' = trace1 t
+      in t::(trace_rec (n-1) t')
+    with NoRuleApplies -> [t]
+
+(**********************************************************************
+ trace : int -> cmd -> conf list
+ Usage: trace n t performs n steps of the small-step semantics
+ **********************************************************************)
+let trace n t = trace_rec n (Cmd(t,bot))

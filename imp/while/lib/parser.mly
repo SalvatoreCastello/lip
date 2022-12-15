@@ -28,10 +28,14 @@ open Ast
 %token RPAREN
 %token EOF
 
-%nonassoc ELSE
+%left SEQ (* Successione di comandi *)
+%nonassoc ELSE DO 
 %left OR
 %left AND
-%left NOT
+%nonassoc NOT
+%left EQ LEQ
+%left ADD SUB
+%left MUL
 
 %start <cmd> prog
 

@@ -2,6 +2,10 @@
 open Ast
 %}
 
+%token LET
+%token EQ
+%token IN
+%token <string> ID
 %token TRUE
 %token FALSE
 %token NOT
@@ -14,20 +18,18 @@ open Ast
 %token SUCC
 %token PRED
 %token ISZERO
-%token LET
 %token LPAREN
 %token RPAREN
 %token EOF
-%token EQUAL
-%token IN
-%token <string> ID
-
 
 %nonassoc ELSE
 %left OR
 %left AND
-%left NOT
+%nonassoc NOT
+
 %nonassoc SUCC, PRED, ISZERO
+
+%right IN
 
 %start <expr> prog
 
@@ -38,6 +40,7 @@ prog:
 ;
 
 expr:
+  | x = ID { Var x }
   | TRUE { True }
   | FALSE { False }
   | NOT; e=expr { Not(e) }
@@ -48,7 +51,5 @@ expr:
   | SUCC; e = expr { Succ(e) }
   | PRED; e = expr { Pred(e) }
   | ISZERO; e = expr { IsZero(e) }
+  | LET; x = ID; EQ; e1=expr; IN; e2=expr; { Let(x,e1,e2) }
   | LPAREN; e=expr; RPAREN {e}
-  | x = ID; { Var(x) }
-  | LET; x = ID; EQUAL; e1 = expr; IN; e2 = expr { Let(x, e1, e2) }
-;
